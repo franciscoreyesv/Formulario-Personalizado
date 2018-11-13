@@ -1,0 +1,143 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- http://garden.zendesk.com -->
+  <link rel="stylesheet" href="https://assets.zendesk.com/apps/sdk-assets/css/2/zendesk_garden.css" type="text/css">
+  <script type="text/javascript" src="https://assets.zendesk.com/apps/sdk/2.0/zaf_sdk.js"></script>
+  <script type="text/javascript" src="clienton.js"></script>
+</head>
+<body>
+  <h2 class="u-gamma">HTF</h2>
+  <!-- https://github.com/zendesk/zendesk_app_framework_sdk -->
+   
+  <script>
+    var client = ZAFClient.init();
+    //PARA CUANDO YA EL TICKET ESTE CREADO.
+
+    client.get('ticket.form.id').then(function(m){
+      hide_fields_default(client);
+      //ahora validamos que se seleccione el formulario que los contiene sin mostrarlos aun
+      if(m['ticket.form.id']==360000156833){//id servicio al cliente 
+        client.get('ticket.customField:custom_field_360007322774').then(function(v){
+          //oculta items select Tipo de Solicitud (SAC)*
+          hide_items_one(v['ticket.customField:custom_field_360007322774']);
+         // guarda(salv);/// acá llamamos la function para resolver el ticket
+        }); 
+      }else if(m['ticket.form.id']==360000163714){//id solicitud de autorizaciones medicas
+        client.get('ticket.customField:custom_field_360007244973').then(function(d){
+          hide_items_two(d['ticket.customField:custom_field_360007244973']);
+        });/*
+       client.get('ticket.custom_field_360008877253.changed', function(r){
+          if(r==null){
+            hide_fields_seven(null);
+          }else if(r=="alto_costo_origen"){
+            hide_fields_seven("alto_costo_origen");
+          }else if(r=="transito_origen"){
+            hide_fields_seven("transito_origen");
+            //comprobar el checkbox
+          }
+        }); //end client.on
+         end client.get*/
+      }else if(m['ticket.form.id']==360000156873){//id de PYP
+         client.get('ticket.customField:custom_field_360007326274').then(function(o){
+          hide_items_three(o['ticket.customField:custom_field_360007326274']);
+        }); 
+      }else if(m['ticket.form.id']==360000156893){//id solicitud prestadores
+         client.get('ticket.customField:custom_field_360007326274').then(function(p){
+          hide_fields_four(p['ticket.customField:custom_field_360007326274']);
+        }); 
+      }else if(m['ticket.form.id']==360000163774){//id solicitud de afiliaciones
+        client.get('ticket.customField:custom_field_360007326754').then(function(w){
+          if(w['ticket.customField:custom_field_360007326754']=="inclusión_de_dependientes"){
+            client.get('ticket.customField:custom_field_360007248573').then(function(item){
+              hide_fields_five(item['ticket.customField:custom_field_360007248573']);
+            });
+          }else if(w['ticket.customField:custom_field_360007326754']=="recibo_de_documentos_para_afiliaciones"){
+            client.get('ticket.customField:custom_field_360007326754').then(function(x){
+              hide_fields_six(x['ticket.customField:custom_field_360007326754']);//origen
+            });
+          }
+        }); 
+      }
+    
+    });//end del primer client.on asociado al cambio del formulario.
+
+
+   
+    
+    //´PARA CUANDO SEAN TICKETS NUEVOS
+    client.on('ticket.form.id.changed', function(e){
+      hide_fields_default(client);
+      //ahora validamos que se seleccione el formulario que los contiene sin mostrarlos aun
+      if(e==360000156833){//id servicio al cliente 
+        client.on('ticket.custom_field_360007322774.changed', function(v){
+          //oculta items select Tipo de Solicitud (SAC)*
+          hide_items_one(v);
+          guarda(salv);
+        }); 
+      }else if(e==360000163714){//id solicitud de autorizaciones medicas
+        //campo Tipo de Solictud (SAM)
+        client.on('ticket.custom_field_360007244973.changed', function(d){
+          hide_items_two(d);
+        });
+        //campo origen    
+        
+        client.on('ticket.custom_field_360008877253.changed', function(r){
+          if(r==null){
+            hide_fields_seven(null);
+          }else if(r=="alto_costo_origen"){
+            hide_fields_seven("alto_costo_origen");
+          }else if(r=="transito_origen"){
+            hide_fields_seven("transito_origen");
+            //comprobar el checkbox
+            //client.on('ticket.custom_field_360007244873.changed:isChecked', function(chx){
+             // console.dir(chx);
+            //});
+          }
+        }); //end client.on
+    
+      }else if(e==360000156873){//id de PYP
+         client.on('ticket.custom_field_360007326274.changed', function(o){
+          hide_items_three(o);
+        }); 
+      }else if(e==360000156893){//id solicitud prestadores
+         client.on('ticket.custom_field_360007326274.changed', function(p){
+          hide_fields_four(p);
+        }); 
+      }else if(e==360000163774){//id solicitud de afiliaciones
+        client.on('ticket.custom_field_360007326754.changed', function(w){
+          if(w=="inclusión_de_dependientes"){
+            client.on('ticket.custom_field_360007248573.changed',function(item){
+              //console.dir(item);
+              hide_fields_five(item);
+            });
+          }else if(x=="recibo_de_documentos_para_afiliaciones"){
+            client.on('ticket.custom_field_360007326754.changed', function(x){
+              hide_fields_six(x);
+            });
+          }
+        }); 
+      }
+    });//end del primer client.on asociado al cambio del formulario.
+
+    client.on('ticket.save',function() {
+    
+       var promise1=client.get('ticket.customField:custom_field_360007322854').then(function(solved){
+       
+                    setTimeout(function() {
+                      //resolved('foasdsado');
+                    }, 300);
+            });
+
+       //var promise2  = MakeQuerablePromise(promise1);
+
+      // console.log(client.get(promise1));
+       //console.log(resolved);
+       //console.dir(promise1);
+         return false;
+      }); 
+
+
+  </script>
+</body>
+</html>
